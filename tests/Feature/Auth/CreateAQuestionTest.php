@@ -27,5 +27,19 @@ test('should ckeck if ends with question mark?', function () {
 });
 
 test('should have at least 10 characters', function () {
+    // preparar
+    $user = User::factory()->create();
+    actingAs($user);
+
+    // agir
+    $request = post(route('question.store'), [
+        'question' => str_repeat("*", 8) . '?',
+    ]);
+
+    // verificar
+    $request->assertSessionHasErrors([
+        'question' => __('validation.min.string', ['min' => 10, 'attribute' => 'question']),
+    ]);
+    assertDatabaseCount('questions', 0);
 
 });
