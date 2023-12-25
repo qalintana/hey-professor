@@ -22,8 +22,20 @@ test('Não deve criar pergunta com mais de 255 caracteres', function () {
 
 });
 
-test('should ckeck if ends with question mark?', function () {
+test('should ckeck if ends with question mark ?', function () {
+    $user = User::factory()->create();
+    actingAs($user);
 
+    // agir
+    $request = post(route('question.store'), [
+        'question' => str_repeat("*", 10),
+    ]);
+
+    // verificar
+    $request->assertSessionHasErrors([
+        'question' => 'Are you sure that is question? It is missing the question mark in the end',
+    ]);
+    assertDatabaseCount('questions', 0);
 });
 
 test('should have at least 10 characters', function () {
